@@ -4,6 +4,7 @@
  */
 
 import { Injectable } from '@angular/core';
+import { StorageQuotaExceededException } from '../../domain/exceptions/storage-quota-exceeded.exception';
 
 export interface StorageAdapter {
   getItem(key: string): string | null;
@@ -33,6 +34,12 @@ export class LocalStorageAdapter implements StorageAdapter {
       localStorage.setItem(key, value);
     } catch (error) {
       console.error('Error writing to localStorage:', error);
+      if (error instanceof Error && error.name === 'QuotaExceededError') {
+        throw new StorageQuotaExceededException(
+          'LocalStorage quota exceeded. Unable to save data.',
+          key
+        );
+      }
       throw new Error(`Failed to store data with key: ${key}`);
     }
   }
