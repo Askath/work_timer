@@ -55,4 +55,17 @@ export class TimerStatus {
   getCssClass(): string {
     return `status-${this.value.toLowerCase()}`;
   }
+
+  static fromString(value: string): TimerStatus {
+    switch (value) {
+      case 'STOPPED':
+        return TimerStatus.STOPPED;
+      case 'RUNNING':
+        return TimerStatus.RUNNING;
+      case 'PAUSED':
+        return TimerStatus.PAUSED;
+      default:
+        return TimerStatus.STOPPED;
+    }
+  }
 }
