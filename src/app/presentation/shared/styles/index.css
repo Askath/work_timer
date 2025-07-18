@@ -1,0 +1,16 @@
+/**
+ * @fileoverview Main stylesheet entry point for presentation layer shared styles.
+ * @author Work Timer Application
+ */
+
+/* Import CSS custom properties and variables */
+@import './variables.css';
+
+/* Import utility classes */
+@import './utilities.css';
+
+/* Import button components */
+@import './buttons.css';
+
+/* Import UI components */
+@import './components.css';

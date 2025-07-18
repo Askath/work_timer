@@ -1,0 +1,62 @@
+/**
+ * @fileoverview Button component styles and utilities.
+ * @author Work Timer Application
+ */
+
+/* Base Button Styles */
+.btn {
+  padding: var(--spacing-md) var(--spacing-2xl);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+/* Button Variants */
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--color-secondary);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: var(--color-secondary-hover);
+}
+
+.btn-stop {
+  background: var(--color-danger);
+  color: white;
+}
+
+.btn-stop:hover {
+  background: var(--color-danger-hover);
+}
+
+/* Button States */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Button Sizes */
+.btn-large {
+  padding: var(--spacing-md) var(--spacing-2xl);
+  font-size: var(--font-size-base);
+}
+
+/* Responsive Button Styles */
+@media (max-width: 768px) {
+  .btn-mobile-full {
+    width: 200px;
+  }
+}

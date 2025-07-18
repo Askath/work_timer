@@ -1,0 +1,155 @@
+/**
+ * @fileoverview Component-specific styles for timer UI elements.
+ * @author Work Timer Application
+ */
+
+/* Time Display Components */
+.time-display {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin: var(--spacing-sm) 0;
+  font-family: var(--font-family-mono);
+}
+
+.time-display-large {
+  font-size: var(--font-size-5xl);
+}
+
+.time-display-medium {
+  font-size: var(--font-size-2xl);
+  color: var(--color-success);
+}
+
+.time-display-small {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+}
+
+.time-display-complete {
+  color: var(--color-danger);
+}
+
+/* Status Indicators */
+.status {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+}
+
+.status-stopped {
+  background: var(--color-danger);
+  color: white;
+}
+
+.status-running {
+  background: var(--color-success);
+  color: white;
+}
+
+.status-paused {
+  background: var(--color-warning);
+  color: #212529;
+}
+
+/* Progress Bar Components */
+.progress-container {
+  margin-bottom: var(--spacing-lg);
+}
+
+.progress-bar {
+  width: 100%;
+  height: var(--progress-bar-height);
+  background: var(--color-bg-border);
+  border-radius: var(--spacing-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-success) 0%, var(--color-warning) 70%, var(--color-danger) 100%);
+  transition: var(--transition-base);
+}
+
+.progress-text {
+  text-align: center;
+  margin-top: var(--spacing-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+/* Header Components */
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.header h1 {
+  font-size: var(--font-size-3xl);
+  color: var(--color-text-primary);
+  margin: 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.header .date {
+  color: var(--color-text-light);
+  font-size: var(--font-size-base);
+  margin-top: var(--spacing-xs);
+}
+
+/* Summary Components */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.summary-item {
+  text-align: center;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-light);
+  border-radius: var(--border-radius-sm);
+}
+
+.summary-item h3 {
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.summary-item .time-display {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+}
+
+/* Session Info Components */
+.session-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-base);
+}
+
+.sessions-count {
+  color: var(--color-text-muted);
+}
+
+/* Responsive Components */
+@media (max-width: 768px) {
+  .time-display-large {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .time-display {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

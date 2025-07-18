@@ -1,0 +1,22 @@
+<!--
+  @fileoverview Progress display template for daily limit progress.
+  @author Work Timer Application
+-->
+
+<div class="card">
+  <h2 class="text-center text-secondary font-weight-medium mb-lg">Daily Limit Progress</h2>
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="data().progressPercentage"></div>
+    </div>
+    <div class="progress-text">{{ data().progressText }}</div>
+  </div>
+  <div class="limit-info">
+    <div class="remaining-time text-center">
+      <h3 class="text-secondary font-weight-medium mb-sm">Remaining Time</h3>
+      <div class="time-display-medium font-mono" [class.time-display-complete]="data().isComplete">
+        {{ data().remainingTime }}
+      </div>
+    </div>
+  </div>
+</div>

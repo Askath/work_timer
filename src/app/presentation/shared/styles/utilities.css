@@ -1,0 +1,146 @@
+/**
+ * @fileoverview CSS utility classes for consistent UI patterns.
+ * @author Work Timer Application
+ */
+
+/* Typography Utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.font-mono {
+  font-family: var(--font-family-mono);
+}
+
+.font-weight-medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.font-weight-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+/* Layout Utilities */
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+}
+
+.grid-auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.grid-single {
+  grid-template-columns: 1fr;
+}
+
+/* Spacing Utilities */
+.gap-xs { gap: var(--spacing-xs); }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+.gap-xl { gap: var(--spacing-xl); }
+.gap-2xl { gap: var(--spacing-2xl); }
+
+.m-0 { margin: 0; }
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+.mb-2xl { margin-bottom: var(--spacing-2xl); }
+
+.p-lg { padding: var(--spacing-lg); }
+.p-xl { padding: var(--spacing-xl); }
+.p-2xl { padding: var(--spacing-2xl); }
+
+/* Container Utilities */
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  font-family: var(--font-family-primary);
+}
+
+.card {
+  background: var(--color-bg-white);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-light);
+}
+
+.card-light {
+  background: var(--color-bg-light);
+  padding: var(--spacing-2xl);
+  border-radius: var(--border-radius-md);
+  border: 2px solid var(--color-bg-border);
+}
+
+.card-success {
+  background: var(--color-bg-success);
+  border: 2px solid var(--color-bg-success-border);
+  color: var(--color-bg-success-text);
+  padding: var(--spacing-2xl);
+  border-radius: var(--border-radius-md);
+}
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  .mobile-flex-column {
+    flex-direction: column;
+  }
+  
+  .mobile-align-center {
+    align-items: center;
+  }
+  
+  .mobile-grid-single {
+    grid-template-columns: 1fr;
+  }
+  
+  .mobile-padding-sm {
+    padding: var(--spacing-md);
+  }
+  
+  .mobile-width-200 {
+    width: 200px;
+  }
+}

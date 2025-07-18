@@ -1,0 +1,21 @@
+<!--
+  @fileoverview Timer controls template for start/stop and reset buttons.
+  @author Work Timer Application
+-->
+
+<div class="timer-controls flex justify-center gap-lg mobile-flex-column mobile-align-center">
+  <button 
+    class="btn btn-primary"
+    [class.btn-stop]="data().isRunning"
+    [disabled]="data().isDisabled"
+    (click)="onStartStopClick()">
+    {{ data().buttonText }}
+  </button>
+  
+  <button 
+    class="btn btn-secondary mobile-width-200"
+    [disabled]="!data().canReset"
+    (click)="onResetClick()">
+    Reset Day
+  </button>
+</div>
