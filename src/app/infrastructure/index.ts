@@ -7,6 +7,13 @@
 export * from './repositories/local-storage-work-session.repository';
 export * from './repositories/local-storage-work-day.repository';
 export * from './repositories/local-storage-timer-state.repository';
+export * from './repositories/sqlite-work-session.repository';
+export * from './repositories/sqlite-work-day.repository';
+export * from './repositories/sqlite-timer-state.repository';
+
+// Services
+export * from './services/sqlite-database.service';
+export * from './services/app-initialization.service';
 
 // Adapters
 export * from './adapters/timer.adapter';

@@ -3,7 +3,7 @@
  * @author Work Timer Application
  */
 
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TimerFacade } from '../../../application/facades/timer.facade';
 import { 
@@ -20,6 +20,7 @@ import { CurrentSessionComponent } from '../../components/current-session/curren
 import { DailySummaryComponent } from '../../components/daily-summary/daily-summary.component';
 import { ProgressDisplayComponent } from '../../components/progress-display/progress-display.component';
 import { WorkCompleteComponent } from '../../components/work-complete/work-complete.component';
+import { WorkHistoryComponent } from '../../components/work-history/work-history.component';
 
 /**
  * Smart container component that coordinates all dashboard UI components.
@@ -36,7 +37,8 @@ import { WorkCompleteComponent } from '../../components/work-complete/work-compl
     CurrentSessionComponent,
     DailySummaryComponent,
     ProgressDisplayComponent,
-    WorkCompleteComponent
+    WorkCompleteComponent,
+    WorkHistoryComponent
   ],
   templateUrl: './dashboard.container.html',
   styleUrl: './dashboard.container.css'
@@ -44,6 +46,10 @@ import { WorkCompleteComponent } from '../../components/work-complete/work-compl
 export class DashboardContainer {
   /** Injected timer facade for timer operations */
   private readonly timerFacade = inject(TimerFacade);
+
+  /** Current view signal for switching between timer and history views */
+  private readonly _currentView = signal<'timer' | 'history'>('timer');
+  readonly currentView = computed(() => this._currentView());
 
   /** Computed header data for app header component */
   readonly headerData = computed<HeaderData>(() => ({
@@ -127,5 +133,19 @@ export class DashboardContainer {
     if (status.isRunning()) return 'status-running';
     if (status.isPaused()) return 'status-paused';
     return 'status-stopped';
+  }
+
+  /**
+   * Switches to the timer view.
+   */
+  showTimerView(): void {
+    this._currentView.set('timer');
+  }
+
+  /**
+   * Switches to the work history view.
+   */
+  showHistoryView(): void {
+    this._currentView.set('history');
   }
 }

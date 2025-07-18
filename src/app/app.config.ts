@@ -7,9 +7,9 @@ import { routes } from './app.routes';
 import { WORK_SESSION_REPOSITORY, WORK_DAY_REPOSITORY, TIMER_STATE_REPOSITORY } from './domain/repositories/injection-tokens';
 
 // Repository implementations
-import { LocalStorageWorkSessionRepository } from './infrastructure/repositories/local-storage-work-session.repository';
-import { LocalStorageWorkDayRepository } from './infrastructure/repositories/local-storage-work-day.repository';
-import { LocalStorageTimerStateRepository } from './infrastructure/repositories/local-storage-timer-state.repository';
+import { SqliteWorkSessionRepository } from './infrastructure/repositories/sqlite-work-session.repository';
+import { SqliteWorkDayRepository } from './infrastructure/repositories/sqlite-work-day.repository';
+import { SqliteTimerStateRepository } from './infrastructure/repositories/sqlite-timer-state.repository';
 
 // Adapter injection tokens
 import { TIMER_ADAPTER, DATE_TIME_ADAPTER, STORAGE_ADAPTER } from './infrastructure/adapters/injection-tokens';
@@ -26,9 +26,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     
     // Repository providers
-    { provide: WORK_SESSION_REPOSITORY, useClass: LocalStorageWorkSessionRepository },
-    { provide: WORK_DAY_REPOSITORY, useClass: LocalStorageWorkDayRepository },
-    { provide: TIMER_STATE_REPOSITORY, useClass: LocalStorageTimerStateRepository },
+    { provide: WORK_SESSION_REPOSITORY, useClass: SqliteWorkSessionRepository },
+    { provide: WORK_DAY_REPOSITORY, useClass: SqliteWorkDayRepository },
+    { provide: TIMER_STATE_REPOSITORY, useClass: SqliteTimerStateRepository },
     
     // Adapter providers
     { provide: TIMER_ADAPTER, useClass: SystemTimerAdapter },
