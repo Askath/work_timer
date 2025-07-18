@@ -1,0 +1,280 @@
+.dashboard {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin: 0;
+  font-weight: 600;
+}
+
+.date {
+  color: #666;
+  font-size: 1.1rem;
+  margin-top: 5px;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.timer-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+}
+
+.btn-stop {
+  background: #dc3545;
+}
+
+.btn-stop:hover {
+  background: #c82333;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.current-session {
+  text-align: center;
+  background: #f8f9fa;
+  padding: 30px;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+}
+
+.current-session h2 {
+  margin: 0 0 20px 0;
+  color: #495057;
+  font-size: 1.5rem;
+}
+
+.time-display {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #007bff;
+  margin: 10px 0;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+
+.current-time {
+  font-size: 4rem;
+}
+
+.session-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  font-size: 1.1rem;
+}
+
+.status {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.status-stopped {
+  background: #dc3545;
+  color: white;
+}
+
+.status-running {
+  background: #28a745;
+  color: white;
+}
+
+.status-paused {
+  background: #ffc107;
+  color: #212529;
+}
+
+.sessions-count {
+  color: #6c757d;
+}
+
+.daily-summary {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.summary-item {
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.summary-item h3 {
+  margin: 0 0 10px 0;
+  color: #495057;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.summary-item .time-display {
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
+.daily-limit {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.daily-limit h2 {
+  margin: 0 0 20px 0;
+  color: #495057;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.progress-container {
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745 0%, #ffc107 70%, #dc3545 100%);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.limit-info {
+  display: flex;
+  justify-content: center;
+}
+
+.remaining-time {
+  text-align: center;
+}
+
+.remaining-time h3 {
+  margin: 0 0 10px 0;
+  color: #495057;
+  font-size: 1.2rem;
+}
+
+.remaining-time .time-display {
+  font-size: 2rem;
+  color: #28a745;
+}
+
+.remaining-time .time-display.complete {
+  color: #dc3545;
+}
+
+.work-complete {
+  background: #d4edda;
+  border: 2px solid #c3e6cb;
+  color: #155724;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.work-complete h2 {
+  margin: 0 0 10px 0;
+  font-size: 2rem;
+}
+
+.work-complete p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 15px;
+  }
+
+  .timer-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    width: 200px;
+  }
+
+  .current-time {
+    font-size: 2.5rem;
+  }
+
+  .time-display {
+    font-size: 2rem;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
