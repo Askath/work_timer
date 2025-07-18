@@ -272,6 +272,7 @@ For detailed development guidelines, see [DEVELOPMENT.md](./DEVELOPMENT.md).
 
 ### Documentation
 
+- **[DDD.md](./DDD.md)**: Complete Domain-Driven Design guide with practical examples from this codebase
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)**: Detailed architecture overview and design patterns
 - **[BUSINESS_RULES.md](./BUSINESS_RULES.md)**: Complete business logic and rules documentation  
 - **[DEVELOPMENT.md](./DEVELOPMENT.md)**: Development setup, guidelines, and best practices
