@@ -153,6 +153,46 @@ describe('PauseDeductionPolicy', () => {
     });
   });
 
+  describe('Deduction Capping Logic', () => {
+    it('should cap deduction at total work time when work time is less than 30 minutes', () => {
+      // This is the critical edge case reported in the issue
+      const startTime1 = new Date(2024, 2, 15, 9, 0, 0);
+      const endTime1 = new Date(2024, 2, 15, 9, 1, 7); // 1 minute 7 seconds work
+      const startTime2 = new Date(2024, 2, 15, 9, 1, 19); // 12 second pause
+      const endTime2 = new Date(2024, 2, 15, 9, 2, 19);
+      
+      const session1 = WorkSession.create(startTime1).stop(endTime1);
+      const session2 = WorkSession.create(startTime2).stop(endTime2);
+      const workDay = new WorkDay(testDate, [session1, session2]);
+      
+      const result = policy.evaluateDeduction(workDay);
+      
+      expect(result.shouldApplyDeduction).toBe(true);
+      // Deduction should be capped at total work time (1:07 + 1:00 = 2:07)
+      const totalWorkTime = workDay.calculateTotalWorkTime();
+      expect(result.deductionAmount.equals(totalWorkTime)).toBe(true);
+      expect(result.deductionAmount.isLessThan(policy.getDeductionAmount())).toBe(true);
+      expect(result.reason).toContain('Deduction capped at total work time');
+    });
+
+    it('should apply full deduction when work time exceeds 30 minutes', () => {
+      const startTime1 = new Date(2024, 2, 15, 9, 0, 0);
+      const endTime1 = new Date(2024, 2, 15, 10, 0, 0); // 60 minutes work
+      const startTime2 = new Date(2024, 2, 15, 10, 15, 0); // 15 minute pause
+      const endTime2 = new Date(2024, 2, 15, 11, 15, 0);
+      
+      const session1 = WorkSession.create(startTime1).stop(endTime1);
+      const session2 = WorkSession.create(startTime2).stop(endTime2);
+      const workDay = new WorkDay(testDate, [session1, session2]);
+      
+      const result = policy.evaluateDeduction(workDay);
+      
+      expect(result.shouldApplyDeduction).toBe(true);
+      expect(result.deductionAmount.toMinutes()).toBe(30); // Full 30-minute deduction
+      expect(result.deductionAmount.equals(policy.getDeductionAmount())).toBe(true);
+    });
+  });
+
   describe('Edge Cases', () => {
     it('should handle very short pause times', () => {
       const startTime1 = new Date(2024, 2, 15, 9, 0, 0);
@@ -281,7 +321,8 @@ describe('PauseDeductionPolicy', () => {
       });
     });
 
-    it('should always return 30-minute deduction amount when applicable', () => {
+    it('should return full 30-minute deduction when work time exceeds deduction amount', () => {
+      // Total work time: 2 hours (60 + 60 minutes), so full deduction applies
       const session1 = WorkSession.create(new Date(2024, 2, 15, 9, 0, 0))
                                   .stop(new Date(2024, 2, 15, 10, 0, 0));
       const session2 = WorkSession.create(new Date(2024, 2, 15, 10, 15, 0))

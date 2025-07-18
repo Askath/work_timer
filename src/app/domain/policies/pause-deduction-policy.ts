@@ -30,6 +30,7 @@ export class PauseDeductionPolicy {
     }
 
     const totalPauseTime = workDay.calculateTotalPauseTime();
+    const totalWorkTime = workDay.calculateTotalWorkTime();
 
     if (totalPauseTime.isZero()) {
       return {
@@ -40,10 +41,11 @@ export class PauseDeductionPolicy {
     }
 
     if (totalPauseTime.isLessThanOrEqual(this.PAUSE_THRESHOLD)) {
+      const cappedDeduction = Duration.min(this.DEDUCTION_AMOUNT, totalWorkTime);
       return {
         shouldApplyDeduction: true,
-        deductionAmount: this.DEDUCTION_AMOUNT,
-        reason: `Total pause time (${totalPauseTime.format()}) is within the ${this.PAUSE_THRESHOLD.format()} threshold`
+        deductionAmount: cappedDeduction,
+        reason: `Total pause time (${totalPauseTime.format()}) is within the ${this.PAUSE_THRESHOLD.format()} threshold. Deduction capped at total work time (${totalWorkTime.format()})`
       };
     }
 

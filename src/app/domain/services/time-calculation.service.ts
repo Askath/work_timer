@@ -18,7 +18,7 @@ export class TimeCalculationService {
   calculateWorkDayMetrics(workDay: WorkDay): WorkDayCalculations {
     const totalWorkTime = workDay.calculateTotalWorkTime();
     const totalPauseTime = workDay.calculateTotalPauseTime();
-    const pauseDeduction = this.calculatePauseDeduction(totalPauseTime, workDay.pauseDeductionApplied);
+    const pauseDeduction = this.calculatePauseDeduction(totalPauseTime, totalWorkTime, workDay.pauseDeductionApplied);
     const effectiveWorkTime = totalWorkTime.subtract(pauseDeduction);
     const remainingTime = this.MAX_WORK_TIME.subtract(effectiveWorkTime);
     const isComplete = effectiveWorkTime.isGreaterThanOrEqual(this.MAX_WORK_TIME);
@@ -33,14 +33,14 @@ export class TimeCalculationService {
     };
   }
 
-  private calculatePauseDeduction(totalPauseTime: Duration, deductionAlreadyApplied: boolean): Duration {
+  private calculatePauseDeduction(totalPauseTime: Duration, totalWorkTime: Duration, deductionAlreadyApplied: boolean): Duration {
     if (deductionAlreadyApplied) {
-      return this.PAUSE_DEDUCTION_AMOUNT;
+      return Duration.min(this.PAUSE_DEDUCTION_AMOUNT, totalWorkTime);
     }
 
     if (totalPauseTime.isGreaterThan(Duration.zero()) && 
         totalPauseTime.isLessThanOrEqual(this.PAUSE_DEDUCTION_THRESHOLD)) {
-      return this.PAUSE_DEDUCTION_AMOUNT;
+      return Duration.min(this.PAUSE_DEDUCTION_AMOUNT, totalWorkTime);
     }
 
     return Duration.zero();

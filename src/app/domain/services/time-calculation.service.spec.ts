@@ -94,6 +94,48 @@ describe('TimeCalculationService', () => {
     });
   });
 
+  describe('Pause Deduction Capping Logic', () => {
+    it('should cap pause deduction at total work time when work time is less than 30 minutes', () => {
+      // Reproduces the edge case from the GitHub issue
+      const startTime1 = new Date(2024, 2, 15, 9, 0, 0);
+      const endTime1 = new Date(2024, 2, 15, 9, 1, 7); // 1 minute 7 seconds work
+      const startTime2 = new Date(2024, 2, 15, 9, 1, 19); // 12 second pause
+      const endTime2 = new Date(2024, 2, 15, 9, 2, 19); // 1 minute work
+      
+      const session1 = WorkSession.create(startTime1).stop(endTime1);
+      const session2 = WorkSession.create(startTime2).stop(endTime2);
+      const workDay = new WorkDay(testDate, [session1, session2]);
+      
+      const metrics = service.calculateWorkDayMetrics(workDay);
+      
+      // Total work time should be about 2 minutes 7 seconds
+      expect(metrics.totalWorkTime.toSeconds()).toBe(127); // 67 + 60 seconds
+      expect(metrics.totalPauseTime.toSeconds()).toBe(12);
+      // Pause deduction should be capped at total work time, not 30 minutes
+      expect(metrics.pauseDeduction.equals(metrics.totalWorkTime)).toBe(true);
+      expect(metrics.pauseDeduction.isLessThan(service.getPauseDeductionAmount())).toBe(true);
+      // Effective work time should be 0 (total work time - total work time)
+      expect(metrics.effectiveWorkTime.isZero()).toBe(true);
+    });
+
+    it('should apply full deduction when work time exceeds 30 minutes', () => {
+      const startTime1 = new Date(2024, 2, 15, 9, 0, 0);
+      const endTime1 = new Date(2024, 2, 15, 10, 0, 0); // 60 minutes work
+      const startTime2 = new Date(2024, 2, 15, 10, 15, 0); // 15 minute pause
+      const endTime2 = new Date(2024, 2, 15, 11, 15, 0); // 60 minutes work
+      
+      const session1 = WorkSession.create(startTime1).stop(endTime1);
+      const session2 = WorkSession.create(startTime2).stop(endTime2);
+      const workDay = new WorkDay(testDate, [session1, session2]);
+      
+      const metrics = service.calculateWorkDayMetrics(workDay);
+      
+      expect(metrics.totalWorkTime.toMinutes()).toBe(120);
+      expect(metrics.pauseDeduction.toMinutes()).toBe(30); // Full deduction
+      expect(metrics.effectiveWorkTime.toMinutes()).toBe(90);
+    });
+  });
+
   describe('Pause Deduction Logic', () => {
     it('should apply deduction for pause time within threshold', () => {
       const startTime1 = new Date(2024, 2, 15, 9, 0, 0);
