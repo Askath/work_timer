@@ -30,6 +30,10 @@ export class Duration {
     return new Duration(0);
   }
 
+  static min(a: Duration, b: Duration): Duration {
+    return a.isLessThanOrEqual(b) ? a : b;
+  }
+
   add(other: Duration): Duration {
     return new Duration(this.milliseconds + other.milliseconds);
   }
