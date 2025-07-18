@@ -3,7 +3,7 @@
  * @author Work Timer Application
  */
 
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, OnDestroy } from '@angular/core';
 import { TimerApplicationService, TimerApplicationState } from '../services/timer-application.service';
 import { ReportingApplicationService, DailyReport } from '../services/reporting-application.service';
 import { WorkSessionApplicationService } from '../services/work-session-application.service';
@@ -22,7 +22,7 @@ import { Duration, TimerStatus, WorkDayDate } from '../../domain';
 @Injectable({
   providedIn: 'root'
 })
-export class TimerFacade {
+export class TimerFacade implements OnDestroy {
   private readonly _state = signal<TimerApplicationState | null>(null);
   private timerInterval: number | null = null;
 
@@ -131,6 +131,10 @@ export class TimerFacade {
   }
 
   // Lifecycle
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
   destroy(): void {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
