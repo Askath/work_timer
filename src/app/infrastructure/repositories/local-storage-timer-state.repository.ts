@@ -6,6 +6,7 @@
 import { Injectable } from '@angular/core';
 import { TimerStatus, WorkDayDate } from '../../domain/index';
 import { TimerStateRepository, TimerStateData } from '../../domain/repositories/timer-state.repository';
+import { LocalStorageAdapter } from '../adapters/local-storage.adapter';
 
 @Injectable({
   providedIn: 'root'
@@ -13,13 +14,15 @@ import { TimerStateRepository, TimerStateData } from '../../domain/repositories/
 export class LocalStorageTimerStateRepository implements TimerStateRepository {
   private readonly STORAGE_KEY = 'work-timer-current-state';
   
+  constructor(private readonly storageAdapter: LocalStorageAdapter) {}
+  
   async saveCurrentState(state: TimerStateData): Promise<void> {
     const serialized = this.serializeState(state);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(serialized));
+    this.storageAdapter.setItem(this.STORAGE_KEY, JSON.stringify(serialized));
   }
   
   async loadCurrentState(): Promise<TimerStateData | null> {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
+    const stored = this.storageAdapter.getItem(this.STORAGE_KEY);
     if (!stored) return null;
     
     try {
@@ -32,7 +35,7 @@ export class LocalStorageTimerStateRepository implements TimerStateRepository {
   }
   
   async clearCurrentState(): Promise<void> {
-    localStorage.removeItem(this.STORAGE_KEY);
+    this.storageAdapter.removeItem(this.STORAGE_KEY);
   }
   
   async hasActiveSession(): Promise<boolean> {

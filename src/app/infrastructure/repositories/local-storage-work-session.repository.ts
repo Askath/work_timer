@@ -6,12 +6,15 @@
 import { Injectable } from '@angular/core';
 import { WorkSession, WorkDayDate } from '../../domain/index';
 import { WorkSessionRepository } from '../../domain/repositories/work-session.repository';
+import { LocalStorageAdapter } from '../adapters/local-storage.adapter';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocalStorageWorkSessionRepository implements WorkSessionRepository {
   private readonly STORAGE_KEY = 'work-timer-sessions';
+  
+  constructor(private readonly storageAdapter: LocalStorageAdapter) {}
   
   async save(session: WorkSession): Promise<void> {
     const sessions = await this.findAll();
@@ -39,7 +42,7 @@ export class LocalStorageWorkSessionRepository implements WorkSessionRepository 
   }
   
   async findAll(): Promise<WorkSession[]> {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
+    const stored = this.storageAdapter.getItem(this.STORAGE_KEY);
     if (!stored) return [];
     
     try {
@@ -67,7 +70,7 @@ export class LocalStorageWorkSessionRepository implements WorkSessionRepository 
   
   private saveToStorage(sessions: WorkSession[]): void {
     const serialized = sessions.map(session => this.serializeSession(session));
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(serialized));
+    this.storageAdapter.setItem(this.STORAGE_KEY, JSON.stringify(serialized));
   }
   
   private serializeSession(session: WorkSession): any {

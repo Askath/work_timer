@@ -24,3 +24,6 @@ export * from './events/work-session-started.event';
 export * from './events/work-session-stopped.event';
 export * from './events/pause-deduction-applied.event';
 export * from './events/daily-limit-reached.event';
+
+// Exceptions
+export * from './exceptions/storage-quota-exceeded.exception';
