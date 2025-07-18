@@ -4,9 +4,6 @@
  */
 
 // Repository implementations
-export * from './repositories/local-storage-work-session.repository';
-export * from './repositories/local-storage-work-day.repository';
-export * from './repositories/local-storage-timer-state.repository';
 export * from './repositories/sqlite-work-session.repository';
 export * from './repositories/sqlite-work-day.repository';
 export * from './repositories/sqlite-timer-state.repository';
