@@ -1,5 +1,6 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 import { routes } from './app.routes';
 
@@ -7,8 +8,8 @@ import { routes } from './app.routes';
 import { WORK_SESSION_REPOSITORY, WORK_DAY_REPOSITORY, TIMER_STATE_REPOSITORY } from './domain/repositories/injection-tokens';
 
 // Repository implementations
-import { LocalStorageWorkSessionRepository } from './infrastructure/repositories/local-storage-work-session.repository';
-import { LocalStorageWorkDayRepository } from './infrastructure/repositories/local-storage-work-day.repository';
+import { HttpWorkSessionRepository } from './infrastructure/repositories/http-work-session.repository';
+import { HttpWorkDayRepository } from './infrastructure/repositories/http-work-day.repository';
 import { LocalStorageTimerStateRepository } from './infrastructure/repositories/local-storage-timer-state.repository';
 
 // Adapter injection tokens
@@ -24,10 +25,11 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    provideHttpClient(),
     
     // Repository providers
-    { provide: WORK_SESSION_REPOSITORY, useClass: LocalStorageWorkSessionRepository },
-    { provide: WORK_DAY_REPOSITORY, useClass: LocalStorageWorkDayRepository },
+    { provide: WORK_SESSION_REPOSITORY, useClass: HttpWorkSessionRepository },
+    { provide: WORK_DAY_REPOSITORY, useClass: HttpWorkDayRepository },
     { provide: TIMER_STATE_REPOSITORY, useClass: LocalStorageTimerStateRepository },
     
     // Adapter providers

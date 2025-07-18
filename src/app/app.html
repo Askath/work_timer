@@ -1,3 +1,16 @@
-<app-dashboard-container></app-dashboard-container>
-
-<router-outlet />
+@if (initializationError()) {
+  <div class="initialization-error">
+    <h2>Initialization Error</h2>
+    <p>Failed to initialize the application: {{ initializationError() }}</p>
+    <button onclick="window.location.reload()">Retry</button>
+  </div>
+} @else if (!isInitialized()) {
+  <div class="initialization-loading">
+    <h2>Initializing Work Timer</h2>
+    <p>Setting up database and migrating data...</p>
+    <div class="loading-spinner"></div>
+  </div>
+} @else {
+  <app-dashboard-container></app-dashboard-container>
+  <router-outlet />
+}

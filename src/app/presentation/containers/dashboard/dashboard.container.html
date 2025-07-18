@@ -7,24 +7,45 @@
   <!-- Header Section -->
   <app-header [data]="headerData()" />
 
+  <!-- Navigation Tabs -->
+  <div class="navigation-tabs">
+    <button 
+      class="nav-tab"
+      [class.active]="currentView() === 'timer'"
+      (click)="showTimerView()">
+      Timer
+    </button>
+    <button 
+      class="nav-tab"
+      [class.active]="currentView() === 'history'"
+      (click)="showHistoryView()">
+      Work History
+    </button>
+  </div>
+
   <!-- Main Content Area -->
   <div class="main-content flex flex-column gap-2xl">
-    <!-- Timer Controls -->
-    <app-timer-controls 
-      [data]="controlsData()" 
-      (startStopClicked)="onStartStopClick()"
-      (resetClicked)="onResetClick()" />
+    @if (currentView() === 'timer') {
+      <!-- Timer Controls -->
+      <app-timer-controls 
+        [data]="controlsData()" 
+        (startStopClicked)="onStartStopClick()"
+        (resetClicked)="onResetClick()" />
 
-    <!-- Current Session Info -->
-    <app-current-session [data]="sessionData()" />
+      <!-- Current Session Info -->
+      <app-current-session [data]="sessionData()" />
 
-    <!-- Daily Summary -->
-    <app-daily-summary [data]="summaryData()" />
+      <!-- Daily Summary -->
+      <app-daily-summary [data]="summaryData()" />
 
-    <!-- Progress Display -->
-    <app-progress-display [data]="progressData()" />
+      <!-- Progress Display -->
+      <app-progress-display [data]="progressData()" />
 
-    <!-- Work Complete Message (shown when daily limit reached) -->
-    <app-work-complete *ngIf="isWorkComplete()" />
+      <!-- Work Complete Message (shown when daily limit reached) -->
+      <app-work-complete *ngIf="isWorkComplete()" />
+    } @else if (currentView() === 'history') {
+      <!-- Work History -->
+      <app-work-history />
+    }
   </div>
 </div>

@@ -4,9 +4,12 @@
  */
 
 // Repository implementations
-export * from './repositories/local-storage-work-session.repository';
-export * from './repositories/local-storage-work-day.repository';
+export * from './repositories/http-work-session.repository';
+export * from './repositories/http-work-day.repository';
 export * from './repositories/local-storage-timer-state.repository';
+
+// Services
+export * from './services/app-initialization.service';
 
 // Adapters
 export * from './adapters/timer.adapter';
