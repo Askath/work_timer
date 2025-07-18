@@ -5,7 +5,7 @@
 
 import { Injectable, signal, computed } from '@angular/core';
 import { TimerFacade } from '../../application/facades/timer.facade';
-import { TimerStatus } from '../../models';
+import { TimerStatus } from './legacy-timer-status';
 
 /**
  * Adapter that bridges the old TimeTrackingService interface with the new TimerFacade.

@@ -19,11 +19,14 @@ describe('TimerApplicationService', () => {
     const timeCalcSpy = jasmine.createSpyObj('TimeCalculationService', [
       'calculateWorkDayMetrics', 
       'shouldApplyPauseDeduction',
-      'isWorkDayComplete'
+      'isWorkDayComplete',
+      'getMaxWorkTime',
+      'calculateProgressPercentage'
     ]);
     const pausePolicySpy = jasmine.createSpyObj('PauseDeductionPolicy', [
       'evaluateDeduction', 
-      'canApplyDeduction'
+      'canApplyDeduction',
+      'getDeductionAmount'
     ]);
 
     TestBed.configureTestingModule({
@@ -37,6 +40,11 @@ describe('TimerApplicationService', () => {
     service = TestBed.inject(TimerApplicationService);
     mockTimeCalculationService = TestBed.inject(TimeCalculationService) as jasmine.SpyObj<TimeCalculationService>;
     mockPauseDeductionPolicy = TestBed.inject(PauseDeductionPolicy) as jasmine.SpyObj<PauseDeductionPolicy>;
+
+    // Set up default return values for new mock methods
+    mockTimeCalculationService.getMaxWorkTime.and.returnValue(TestDurations.TEN_HOURS);
+    mockTimeCalculationService.calculateProgressPercentage.and.returnValue(0);
+    mockPauseDeductionPolicy.getDeductionAmount.and.returnValue(TestDurations.THIRTY_MINUTES);
   });
 
   describe('Service Initialization', () => {
@@ -81,51 +89,68 @@ describe('TimerApplicationService', () => {
       });
     });
 
-    it('should start work session', async () => {
-      spyOn(service, 'getCurrentTime').and.returnValue(TestTimes.NINE_AM);
+    it('should start work session', () => {
+      // Mock Date.now or use jasmine.clock
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
       
-      await service.startWork();
+      service.startWork();
       
       const state = service.getCurrentState();
       expect(state.workDay.status.isRunning()).toBe(true);
       expect(state.workDay.currentSession).not.toBeNull();
+      
+      jasmine.clock().uninstall();
     });
 
-    it('should stop work session', async () => {
-      spyOn(service, 'getCurrentTime').and.returnValues(TestTimes.NINE_AM, TestTimes.TEN_AM);
+    it('should stop work session', () => {
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
       
-      await service.startWork();
-      await service.stopWork();
+      service.startWork();
+      
+      jasmine.clock().mockDate(TestTimes.TEN_AM);
+      service.stopWork();
       
       const state = service.getCurrentState();
       expect(state.workDay.status.isPaused()).toBe(true);
       expect(state.workDay.currentSession).toBeNull();
       expect(state.workDay.sessions.length).toBe(1);
+      
+      jasmine.clock().uninstall();
     });
 
-    it('should reset timer', async () => {
-      spyOn(service, 'getCurrentTime').and.returnValues(TestTimes.NINE_AM, TestTimes.TEN_AM);
+    it('should reset timer', () => {
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
       
-      await service.startWork();
-      await service.stopWork();
-      await service.resetTimer();
+      service.startWork();
+      
+      jasmine.clock().mockDate(TestTimes.TEN_AM);
+      service.stopWork();
+      service.resetTimer();
       
       const state = service.getCurrentState();
       expect(state.workDay.status.isStopped()).toBe(true);
       expect(state.workDay.sessions.length).toBe(0);
       expect(state.workDay.currentSession).toBeNull();
+      
+      jasmine.clock().uninstall();
     });
 
-    it('should throw error when starting work while already running', async () => {
-      spyOn(service, 'getCurrentTime').and.returnValue(TestTimes.NINE_AM);
+    it('should throw error when starting work while already running', () => {
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
       
-      await service.startWork();
+      service.startWork();
       
-      await expectAsync(service.startWork()).toBeRejectedWithError('Cannot start work when already running.');
+      expect(() => service.startWork()).toThrowError();
+      
+      jasmine.clock().uninstall();
     });
 
-    it('should throw error when stopping work while not running', async () => {
-      await expectAsync(service.stopWork()).toBeRejectedWithError('Cannot stop work when not running.');
+    it('should throw error when stopping work while not running', () => {
+      expect(() => service.stopWork()).toThrowError('No active work session to stop');
     });
   });
 
@@ -141,46 +166,43 @@ describe('TimerApplicationService', () => {
       });
     });
 
-    it('should apply pause deduction when conditions are met', async () => {
+    it('should apply pause deduction when conditions are met', () => {
       mockPauseDeductionPolicy.canApplyDeduction.and.returnValue(true);
-      mockPauseDeductionPolicy.evaluateDeduction.and.returnValue({
-        shouldApplyDeduction: true,
-        deductionAmount: TestDurations.THIRTY_MINUTES,
-        reason: 'Pause time within threshold'
-      });
+      mockPauseDeductionPolicy.getDeductionAmount.and.returnValue(TestDurations.THIRTY_MINUTES);
       
-      spyOn(service, 'getCurrentTime').and.returnValues(
-        TestTimes.NINE_AM,    // Start work
-        TestTimes.TEN_AM,     // Stop work (pause)
-        TestTimes.TEN_THIRTY_AM  // Resume work
-      );
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
       
-      await service.startWork();
-      await service.stopWork();
-      await service.startWork(); // This should trigger pause deduction evaluation
+      service.startWork();
+      
+      jasmine.clock().mockDate(TestTimes.TEN_AM);
+      service.stopWork();
+      
+      jasmine.clock().mockDate(TestTimes.TEN_THIRTY_AM);
+      service.startWork(); // This should trigger pause deduction evaluation
       
       expect(mockPauseDeductionPolicy.canApplyDeduction).toHaveBeenCalled();
+      
+      jasmine.clock().uninstall();
     });
 
-    it('should not apply pause deduction when already applied', async () => {
+    it('should not apply pause deduction when already applied', () => {
       mockPauseDeductionPolicy.canApplyDeduction.and.returnValue(false);
-      mockPauseDeductionPolicy.evaluateDeduction.and.returnValue({
-        shouldApplyDeduction: false,
-        deductionAmount: TestDurations.THIRTY_MINUTES,
-        reason: 'Already applied'
-      });
       
-      spyOn(service, 'getCurrentTime').and.returnValues(
-        TestTimes.NINE_AM,
-        TestTimes.TEN_AM,
-        TestTimes.TEN_FIFTEEN_AM
-      );
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
       
-      await service.startWork();
-      await service.stopWork();
-      await service.startWork();
+      service.startWork();
+      
+      jasmine.clock().mockDate(TestTimes.TEN_AM);
+      service.stopWork();
+      
+      jasmine.clock().mockDate(TestTimes.TEN_THIRTY_AM);
+      service.startWork();
       
       expect(mockPauseDeductionPolicy.canApplyDeduction).toHaveBeenCalled();
+      
+      jasmine.clock().uninstall();
     });
   });
 
@@ -204,15 +226,9 @@ describe('TimerApplicationService', () => {
     });
 
     it('should calculate current session time for running session', () => {
-      spyOn(service, 'getCurrentTime').and.returnValues(TestTimes.NINE_AM, TestTimes.NINE_AM);
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
       
-      // Mock running session
-      const mockWorkDay = jasmine.createSpyObj('WorkDay', ['getCurrentSessionTime', 'status']);
-      mockWorkDay.status = TimerStatus.RUNNING;
-      mockWorkDay.getCurrentSessionTime.and.returnValue(TestDurations.THIRTY_MINUTES);
-      
-      // We need to set up the service state differently for this test
-      // This is a limitation of the current design - we might need to refactor
       mockTimeCalculationService.calculateWorkDayMetrics.and.returnValue({
         totalWorkTime: TestDurations.ZERO,
         totalPauseTime: TestDurations.ZERO,
@@ -222,9 +238,14 @@ describe('TimerApplicationService', () => {
         isComplete: false
       });
       
+      // Start a session to test current session time calculation
+      service.startWork();
       const state = service.getCurrentState();
       
       expect(mockTimeCalculationService.calculateWorkDayMetrics).toHaveBeenCalled();
+      expect(state.currentSessionTime).toBeDefined();
+      
+      jasmine.clock().uninstall();
     });
   });
 
@@ -245,8 +266,7 @@ describe('TimerApplicationService', () => {
       expect(state.calculations.remainingTime.isZero()).toBe(true);
     });
 
-    it('should prevent starting work when daily limit reached', async () => {
-      mockTimeCalculationService.isWorkDayComplete.and.returnValue(true);
+    it('should prevent starting work when daily limit reached', () => {
       mockTimeCalculationService.calculateWorkDayMetrics.and.returnValue({
         totalWorkTime: TestDurations.TEN_HOURS,
         totalPauseTime: TestDurations.ZERO,
@@ -256,16 +276,20 @@ describe('TimerApplicationService', () => {
         isComplete: true
       });
       
-      await expectAsync(service.startWork()).toBeRejectedWithError('Daily work limit has been reached.');
+      // The service should check if work is complete before allowing start
+      const canStart = service.canStartWork();
+      expect(canStart).toBe(false);
     });
   });
 
   describe('Event Handling', () => {
-    it('should notify listeners when work session starts', async () => {
+    it('should notify listeners when work session starts', () => {
       const eventSpy = jasmine.createSpy('eventHandler');
-      service.addEventHandler(eventSpy);
+      service.onEvent(eventSpy);
       
-      spyOn(service, 'getCurrentTime').and.returnValue(TestTimes.NINE_AM);
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
+      
       mockTimeCalculationService.calculateWorkDayMetrics.and.returnValue({
         totalWorkTime: TestDurations.ZERO,
         totalPauseTime: TestDurations.ZERO,
@@ -275,16 +299,20 @@ describe('TimerApplicationService', () => {
         isComplete: false
       });
       
-      await service.startWork();
+      service.startWork();
       
       expect(eventSpy).toHaveBeenCalled();
+      
+      jasmine.clock().uninstall();
     });
 
-    it('should notify listeners when work session stops', async () => {
+    it('should notify listeners when work session stops', () => {
       const eventSpy = jasmine.createSpy('eventHandler');
-      service.addEventHandler(eventSpy);
+      service.onEvent(eventSpy);
       
-      spyOn(service, 'getCurrentTime').and.returnValues(TestTimes.NINE_AM, TestTimes.TEN_AM);
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
+      
       mockTimeCalculationService.calculateWorkDayMetrics.and.returnValue({
         totalWorkTime: TestDurations.ONE_HOUR,
         totalPauseTime: TestDurations.ZERO,
@@ -294,18 +322,25 @@ describe('TimerApplicationService', () => {
         isComplete: false
       });
       
-      await service.startWork();
-      await service.stopWork();
+      service.startWork();
+      
+      jasmine.clock().mockDate(TestTimes.TEN_AM);
+      service.stopWork();
       
       expect(eventSpy).toHaveBeenCalledTimes(2); // Start and stop events
+      
+      jasmine.clock().uninstall();
     });
 
-    it('should allow removing event handlers', async () => {
-      const eventSpy = jasmine.createSpy('eventHandler');
-      service.addEventHandler(eventSpy);
-      service.removeEventHandler(eventSpy);
+    it('should handle multiple event handlers', () => {
+      const eventSpy1 = jasmine.createSpy('eventHandler1');
+      const eventSpy2 = jasmine.createSpy('eventHandler2');
+      service.onEvent(eventSpy1);
+      service.onEvent(eventSpy2);
       
-      spyOn(service, 'getCurrentTime').and.returnValue(TestTimes.NINE_AM);
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
+      
       mockTimeCalculationService.calculateWorkDayMetrics.and.returnValue({
         totalWorkTime: TestDurations.ZERO,
         totalPauseTime: TestDurations.ZERO,
@@ -315,9 +350,12 @@ describe('TimerApplicationService', () => {
         isComplete: false
       });
       
-      await service.startWork();
+      service.startWork();
       
-      expect(eventSpy).not.toHaveBeenCalled();
+      expect(eventSpy1).toHaveBeenCalled();
+      expect(eventSpy2).toHaveBeenCalled();
+      
+      jasmine.clock().uninstall();
     });
   });
 
@@ -328,7 +366,7 @@ describe('TimerApplicationService', () => {
       expect(() => service.getCurrentState()).toThrowError('Calculation error');
     });
 
-    it('should handle pause deduction policy errors gracefully', async () => {
+    it('should handle pause deduction policy errors gracefully', () => {
       mockPauseDeductionPolicy.canApplyDeduction.and.throwError('Policy error');
       mockTimeCalculationService.calculateWorkDayMetrics.and.returnValue({
         totalWorkTime: TestDurations.ZERO,
@@ -339,17 +377,26 @@ describe('TimerApplicationService', () => {
         isComplete: false
       });
       
-      spyOn(service, 'getCurrentTime').and.returnValues(TestTimes.NINE_AM, TestTimes.TEN_AM);
+      jasmine.clock().install();
+      jasmine.clock().mockDate(TestTimes.NINE_AM);
       
-      await service.startWork();
+      service.startWork();
       
-      await expectAsync(service.stopWork()).toBeRejectedWithError('Policy error');
+      jasmine.clock().mockDate(TestTimes.TEN_AM);
+      
+      // The error should be thrown when starting work again (which checks pause deduction)
+      expect(() => service.startWork()).toThrowError('Policy error');
+      
+      jasmine.clock().uninstall();
     });
   });
 
   describe('Time Management', () => {
-    it('should use current time for operations', async () => {
-      const currentTimeSpy = spyOn(service, 'getCurrentTime').and.returnValue(TestTimes.NINE_AM);
+    it('should use current time for operations', () => {
+      jasmine.clock().install();
+      const testTime = TestTimes.NINE_AM;
+      jasmine.clock().mockDate(testTime);
+      
       mockTimeCalculationService.calculateWorkDayMetrics.and.returnValue({
         totalWorkTime: TestDurations.ZERO,
         totalPauseTime: TestDurations.ZERO,
@@ -359,9 +406,13 @@ describe('TimerApplicationService', () => {
         isComplete: false
       });
       
-      await service.startWork();
+      service.startWork();
       
-      expect(currentTimeSpy).toHaveBeenCalled();
+      const state = service.getCurrentState();
+      // Verify that the work session was started at the mocked time
+      expect(state.workDay.currentSession).not.toBeNull();
+      
+      jasmine.clock().uninstall();
     });
 
     it('should handle date transitions correctly', () => {

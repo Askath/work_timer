@@ -1,6 +1,6 @@
 # Work Timer
 
-A comprehensive Angular application for tracking work time with intelligent pause calculation, deduction rules, and daily limits.
+A Domain-Driven Design (DDD) Angular application for tracking work time with intelligent pause calculation, business rule enforcement, and daily limits. Built with Angular 20.1.0, standalone components, and Angular Signals for reactive state management.
 
 ## Features
 
@@ -17,28 +17,42 @@ A comprehensive Angular application for tracking work time with intelligent paus
 ## Technology Stack
 
 - **Angular 20.1.0**: Modern Angular framework with standalone components
-- **TypeScript**: Type-safe development
-- **Angular Signals**: Reactive state management
+- **TypeScript**: Type-safe development with strict mode
+- **Angular Signals**: Reactive state management and change detection
+- **Domain-Driven Design**: Clean architecture with layer separation
+- **CQRS Pattern**: Command Query Responsibility Segregation
+- **Repository Pattern**: Abstract data access layer
+- **OnPush Change Detection**: Optimized performance strategy
 - **CSS3**: Custom styling with responsive design
-- **LocalStorage**: Data persistence
+- **LocalStorage**: Browser-based data persistence
 
 ## Project Structure
 
 ```
 src/app/
-├── components/
-│   └── dashboard.component.ts    # Main dashboard UI component
-├── models/
-│   ├── timer-state.interface.ts  # Timer state interface
-│   ├── time-session.interface.ts # Individual session interface
-│   └── daily-time-data.interface.ts # Daily aggregated data interface
-├── services/
-│   ├── time-tracking.service.ts  # Core timer logic service
-│   ├── local-storage.service.ts  # Data persistence service
-│   └── index.ts                  # Service barrel exports
-├── app.ts                        # Root component
-├── app.html                      # Root template
-└── app.css                       # Root styles
+├── application/              # Application layer (use cases, facades)
+│   ├── commands/            # Command objects (CQRS)
+│   ├── queries/             # Query objects (CQRS)
+│   ├── handlers/            # Command/query handlers
+│   ├── services/            # Application services
+│   └── facades/             # Facade pattern implementations
+├── domain/                  # Domain layer (business logic)
+│   ├── entities/            # Domain entities (WorkDay, WorkSession)
+│   ├── value-objects/       # Value objects (Duration, TimerStatus)
+│   ├── services/            # Domain services
+│   └── events/              # Domain events
+├── infrastructure/          # Infrastructure layer (external concerns)
+│   ├── repositories/        # Repository implementations
+│   ├── persistence/         # Data persistence services
+│   └── adapters/            # External system adapters
+├── presentation/            # Presentation layer (UI components)
+│   ├── components/          # Dumb/presentation components
+│   ├── containers/          # Smart/container components
+│   ├── interfaces/          # Component data contracts
+│   └── shared/              # Shared UI resources
+├── components/              # Legacy components (being migrated)
+├── app.component.ts         # Root component
+└── main.ts                  # Application bootstrap
 ```
 
 ## Installation
@@ -56,10 +70,14 @@ npm install
 
 3. Start the development server:
 ```bash
+npm start
+# or
 ng serve
 ```
 
 4. Open your browser and navigate to `http://localhost:4200/`
+
+See [DEVELOPMENT.md](./DEVELOPMENT.md) for detailed development setup and guidelines.
 
 ## Usage
 
@@ -92,89 +110,125 @@ ng serve
 - Timer automatically stops when limit is reached
 - Effective work time (after deductions) is used for limit calculation
 
-## API Documentation
+For detailed business rules and logic, see [BUSINESS_RULES.md](./BUSINESS_RULES.md).
 
-### TimeTrackingService
+## Architecture Overview
 
-The core service managing all timer operations:
+This application implements Domain-Driven Design (DDD) with clear layer separation:
+
+### Core Layers
+
+#### Domain Layer
+Contains pure business logic, entities, and value objects:
+- **WorkDay**: Manages daily work sessions and calculations
+- **Duration**: Immutable time value object with business methods
+- **TimerStatus**: Work timer state management
+- **Business Rules**: 30-minute deduction rule, 10-hour daily limit
+
+#### Application Layer  
+Orchestrates domain operations using CQRS pattern:
+- **Commands**: `StartWorkCommand`, `StopWorkCommand`, `ResetTimerCommand`
+- **Queries**: `GetCurrentSessionQuery`, `GetDailyReportQuery`
+- **Handlers**: Process commands and queries
+- **TimerFacade**: Unified API with reactive signals for UI
+
+#### Infrastructure Layer
+Handles external concerns and data persistence:
+- **Repositories**: Abstract data access
+- **LocalStorageService**: Browser persistence implementation
+- **Adapters**: Legacy compatibility during migration
+
+#### Presentation Layer
+UI components with clear data flow:
+- **Dumb Components**: Pure presentation with inputs/outputs
+- **Smart Components**: Inject facades and manage local state
+- **OnPush Change Detection**: Optimized performance
+
+### API Documentation
+
+#### TimerFacade (Primary API)
 
 ```typescript
-// Start or resume work timer
-startWork(): void
+// Timer operations
+async startWork(): Promise<void>
+async stopWork(): Promise<void>
+async resetTimer(): Promise<void>
 
-// Stop work timer and transition to paused state
-stopWork(): void
-
-// Reset timer and clear all data
-resetTimer(): void
-
-// Computed signals for reactive data
+// Reactive state (computed signals)
 readonly currentStatus: Signal<TimerStatus>
-readonly currentWorkTime: Signal<number>
-readonly effectiveWorkTime: Signal<number>
-readonly remainingTime: Signal<number>
+readonly currentWorkTime: Signal<Duration>
+readonly effectiveWorkTime: Signal<Duration>
+readonly remainingTime: Signal<Duration>
 readonly isWorkComplete: Signal<boolean>
+readonly progressPercentage: Signal<number>
+
+// Formatted display values
+readonly formattedCurrentTime: Signal<string>
+readonly formattedEffectiveTime: Signal<string>
+readonly buttonText: Signal<string>
 ```
 
-### LocalStorageService
+### Domain Models
 
-Handles data persistence:
-
+#### Core Value Objects
 ```typescript
-// Save/retrieve timer state
-saveTimerState(state: TimerState): void
-getTimerState(): TimerState | null
+// Duration - Immutable time representation
+class Duration {
+  static fromMinutes(minutes: number): Duration
+  static fromHours(hours: number): Duration
+  get milliseconds(): number
+  get minutes(): number
+  get hours(): number
+  add(other: Duration): Duration
+  subtract(other: Duration): Duration
+  format(): string // "HH:MM:SS"
+}
 
-// Save/retrieve work sessions
-saveSession(session: TimeSession): void
-getAllSessions(): TimeSession[]
+// TimerStatus - Work timer state
+class TimerStatus {
+  static readonly STOPPED: TimerStatus
+  static readonly RUNNING: TimerStatus  
+  static readonly PAUSED: TimerStatus
+  isRunning(): boolean
+  isPaused(): boolean
+  isStopped(): boolean
+  getDisplayText(): string
+}
 
-// Save/retrieve daily data
-saveDailyData(data: DailyTimeData): void
-getDailyData(date: string): DailyTimeData | null
-```
-
-### Data Models
-
-#### TimerState
-```typescript
-interface TimerState {
-  status: TimerStatus;
-  startTime: Date | null;
-  currentSessionStart: Date | null;
-  totalWorkTime: number;
-  totalPauseTime: number;
-  currentSessionTime: number;
-  sessionsCount: number;
-  lastPauseDeduction: number;
+// WorkDayDate - Date value object
+class WorkDayDate {
+  static today(): WorkDayDate
+  static fromDate(date: Date): WorkDayDate
+  equals(other: WorkDayDate): boolean
+  toString(): string
 }
 ```
 
-#### TimeSession
+#### Domain Entities
 ```typescript
-interface TimeSession {
-  id: string;
-  startTime: Date;
-  endTime: Date | null;
-  duration: number;
-  isPause: boolean;
-  date: string;
+// WorkDay - Aggregate root for daily work tracking
+class WorkDay {
+  readonly date: WorkDayDate
+  readonly sessions: WorkSession[]
+  readonly status: TimerStatus
+  readonly sessionCount: number
+  
+  startSession(): WorkSession
+  stopCurrentSession(): void
+  calculateTotalWorkTime(): Duration
+  calculateEffectiveWorkTime(): Duration
+  isComplete(): boolean
 }
-```
 
-#### DailyTimeData
-```typescript
-interface DailyTimeData {
-  date: string;
-  sessions: TimeSession[];
-  totalWorkTime: number;
-  totalPauseTime: number;
-  pauseDeduction: number;
-  effectiveWorkTime: number;
-  remainingTime: number;
-  isComplete: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+// WorkSession - Individual work period
+class WorkSession {
+  readonly id: string
+  readonly startTime: Date
+  readonly endTime: Date | null
+  readonly duration: Duration
+  
+  complete(endTime: Date): WorkSession
+  isActive(): boolean
 }
 ```
 
@@ -183,29 +237,45 @@ interface DailyTimeData {
 ### Building for Production
 
 ```bash
-ng build --prod
+npm run build
+# or
+ng build --configuration=production
 ```
 
 ### Running Tests
 
 ```bash
+npm test
+# or
 ng test
 ```
 
 ### Code Quality
 
-This project follows Angular best practices:
-- Single Responsibility Principle
-- Reactive programming with Angular Signals
-- Comprehensive error handling
-- Type safety with TypeScript
-- Clean architecture with separation of concerns
+This project follows Domain-Driven Design and Angular best practices:
+- **Domain-Driven Design**: Clear separation of business logic
+- **CQRS Pattern**: Separate command and query responsibilities  
+- **Clean Architecture**: Dependency inversion and layer isolation
+- **Angular Signals**: Reactive programming with automatic change detection
+- **OnPush Strategy**: Optimized change detection for performance
+- **Type Safety**: Strict TypeScript configuration
+- **Immutable State**: Predictable state management
+- **Repository Pattern**: Abstract data access layer
+
+For detailed development guidelines, see [DEVELOPMENT.md](./DEVELOPMENT.md).
 
 ### Browser Compatibility
 
 - Modern browsers supporting ES2020+
 - LocalStorage API required for data persistence
 - Responsive design for mobile and desktop
+
+### Documentation
+
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)**: Detailed architecture overview and design patterns
+- **[BUSINESS_RULES.md](./BUSINESS_RULES.md)**: Complete business logic and rules documentation  
+- **[DEVELOPMENT.md](./DEVELOPMENT.md)**: Development setup, guidelines, and best practices
+- **[CLAUDE.md](./CLAUDE.md)**: Claude AI development instructions and context
 
 ## Contributing
 

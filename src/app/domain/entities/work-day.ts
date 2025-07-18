@@ -70,7 +70,26 @@ export class WorkDay {
     }
 
     if (this._currentSession && this._currentSession.isRunning) {
-      throw new Error('A work session is already running');
+      throw new Error('Cannot start work when already running.');
+    }
+
+    const newSession = WorkSession.create(startTime);
+    return new WorkDay(
+      this.date,
+      this._sessions,
+      newSession,
+      TimerStatus.RUNNING,
+      this._pauseDeductionApplied
+    );
+  }
+
+  resumeWork(startTime: Date): WorkDay {
+    if (!this._status.isPaused()) {
+      throw new Error('Cannot resume work when not paused.');
+    }
+
+    if (!this.date.equals(WorkDayDate.fromDate(startTime))) {
+      throw new Error('Cannot resume work on a different date');
     }
 
     const newSession = WorkSession.create(startTime);
@@ -85,11 +104,32 @@ export class WorkDay {
 
   stopWork(endTime: Date): WorkDay {
     if (!this._status.isRunning()) {
-      throw new Error('No work session is currently running');
+      throw new Error('Cannot stop work when not running.');
     }
 
     if (!this._currentSession) {
       throw new Error('No current session to stop');
+    }
+
+    const stoppedSession = this._currentSession.stop(endTime);
+    const newSessions = [...this._sessions, stoppedSession];
+
+    return new WorkDay(
+      this.date,
+      newSessions,
+      null,
+      TimerStatus.STOPPED,
+      this._pauseDeductionApplied
+    );
+  }
+
+  pauseWork(endTime: Date): WorkDay {
+    if (!this._status.isRunning()) {
+      throw new Error('Cannot pause work when not running.');
+    }
+
+    if (!this._currentSession) {
+      throw new Error('No current session to pause');
     }
 
     const stoppedSession = this._currentSession.stop(endTime);
@@ -162,6 +202,22 @@ export class WorkDay {
     }
 
     return this._currentSession.updateCurrentDuration(new Date());
+  }
+
+  getCurrentSessionDuration(currentTime: Date): Duration {
+    if (!this._currentSession) {
+      return Duration.zero();
+    }
+
+    return this._currentSession.updateCurrentDuration(currentTime);
+  }
+
+  hasActivity(): boolean {
+    return this._sessions.length > 0 || this._currentSession !== null;
+  }
+
+  isActive(): boolean {
+    return this._status.isRunning();
   }
 
   toData(): {

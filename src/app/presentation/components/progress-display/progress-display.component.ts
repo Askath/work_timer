@@ -3,7 +3,7 @@
  * @author Work Timer Application
  */
 
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { ProgressData } from '../../interfaces/component-data.interfaces';
 
 /**
@@ -15,7 +15,8 @@ import { ProgressData } from '../../interfaces/component-data.interfaces';
   selector: 'app-progress-display',
   standalone: true,
   templateUrl: './progress-display.component.html',
-  styleUrl: './progress-display.component.css'
+  styleUrl: './progress-display.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProgressDisplayComponent {
   /** Progress data containing percentage, text, and remaining time */

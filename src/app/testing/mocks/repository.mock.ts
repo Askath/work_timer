@@ -8,7 +8,7 @@ import { WorkSession } from '../../domain/entities/work-session';
 import { WorkDay } from '../../domain/entities/work-day';
 import { WorkSessionRepository } from '../../domain/repositories/work-session.repository';
 import { WorkDayRepository } from '../../domain/repositories/work-day.repository';
-import { TimerStateRepository } from '../../domain/repositories/timer-state.repository';
+import { TimerStateRepository, TimerStateData } from '../../domain/repositories/timer-state.repository';
 import { TimerApplicationState } from '../../application/services/timer-application.service';
 
 export class MockWorkSessionRepository implements WorkSessionRepository {
@@ -84,6 +84,10 @@ export class MockWorkDayRepository implements WorkDayRepository {
     return Promise.resolve();
   });
 
+  exists = jasmine.createSpy('exists').and.callFake((date: WorkDayDate) => {
+    return Promise.resolve(this.workDays.has(date.toISOString()));
+  });
+
   // Utility methods for testing
   setWorkDay(workDay: WorkDay): void {
     this.workDays.set(workDay.date.toISOString(), workDay);
@@ -99,28 +103,32 @@ export class MockWorkDayRepository implements WorkDayRepository {
 }
 
 export class MockTimerStateRepository implements TimerStateRepository {
-  private state: TimerApplicationState | null = null;
+  private state: TimerStateData | null = null;
 
-  save = jasmine.createSpy('save').and.callFake((state: TimerApplicationState) => {
+  saveCurrentState = jasmine.createSpy('saveCurrentState').and.callFake((state: TimerStateData) => {
     this.state = state;
     return Promise.resolve();
   });
 
-  load = jasmine.createSpy('load').and.callFake(() => {
+  loadCurrentState = jasmine.createSpy('loadCurrentState').and.callFake(() => {
     return Promise.resolve(this.state);
   });
 
-  clear = jasmine.createSpy('clear').and.callFake(() => {
+  clearCurrentState = jasmine.createSpy('clearCurrentState').and.callFake(() => {
     this.state = null;
     return Promise.resolve();
   });
 
+  hasActiveSession = jasmine.createSpy('hasActiveSession').and.callFake(() => {
+    return Promise.resolve(this.state !== null && this.state.status.isRunning());
+  });
+
   // Utility methods for testing
-  setState(state: TimerApplicationState): void {
+  setState(state: TimerStateData): void {
     this.state = state;
   }
 
-  getState(): TimerApplicationState | null {
+  getState(): TimerStateData | null {
     return this.state;
   }
 
@@ -142,7 +150,7 @@ export function createMockWorkDayRepository(workDays: WorkDay[] = []): MockWorkD
   return repo;
 }
 
-export function createMockTimerStateRepository(state?: TimerApplicationState): MockTimerStateRepository {
+export function createMockTimerStateRepository(state?: TimerStateData): MockTimerStateRepository {
   const repo = new MockTimerStateRepository();
   if (state) {
     repo.setState(state);

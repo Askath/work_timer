@@ -3,7 +3,7 @@
  * @author Work Timer Application
  */
 
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TimerFacade } from '../application/facades/timer.facade';
 import { TimerStatus } from '../domain';
@@ -19,7 +19,8 @@ import { TimerStatus } from '../domain';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrl: './dashboard.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent {
   /** Injected timer facade for timer operations */

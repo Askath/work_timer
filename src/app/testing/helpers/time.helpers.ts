@@ -86,6 +86,7 @@ export const TestDates = {
 export const TestTimes = {
   NINE_AM: createLocalDate(2024, 3, 15, 9, 0, 0),
   TEN_AM: createLocalDate(2024, 3, 15, 10, 0, 0),
+  TEN_FIFTEEN_AM: createLocalDate(2024, 3, 15, 10, 15, 0),
   TEN_THIRTY_AM: createLocalDate(2024, 3, 15, 10, 30, 0),
   ELEVEN_AM: createLocalDate(2024, 3, 15, 11, 0, 0),
   NOON: createLocalDate(2024, 3, 15, 12, 0, 0),

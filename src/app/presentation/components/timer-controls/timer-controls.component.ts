@@ -3,7 +3,7 @@
  * @author Work Timer Application
  */
 
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { TimerControlsData, TimerControlsEvents } from '../../interfaces/component-data.interfaces';
 
 /**
@@ -15,7 +15,8 @@ import { TimerControlsData, TimerControlsEvents } from '../../interfaces/compone
   selector: 'app-timer-controls',
   standalone: true,
   templateUrl: './timer-controls.component.html',
-  styleUrl: './timer-controls.component.css'
+  styleUrl: './timer-controls.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimerControlsComponent {
   /** Timer controls data containing button states and text */

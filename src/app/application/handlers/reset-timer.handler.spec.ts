@@ -56,7 +56,7 @@ describe('ResetTimerHandler', () => {
     it('should propagate service errors', async () => {
       const command = new ResetTimerCommand();
       const error = new Error('Reset service error');
-      mockTimerApplicationService.resetTimer.and.rejectWith(error);
+      mockTimerApplicationService.resetTimer.and.throwError(error);
       
       await expectAsync(handler.handle(command)).toBeRejectedWith(error);
     });
@@ -86,7 +86,7 @@ describe('ResetTimerHandler', () => {
   describe('Async Behavior', () => {
     it('should complete when service completes', async () => {
       const command = new ResetTimerCommand();
-      mockTimerApplicationService.resetTimer.and.returnValue(Promise.resolve());
+      mockTimerApplicationService.resetTimer.and.returnValue(undefined);
       
       const result = handler.handle(command);
       
@@ -97,7 +97,7 @@ describe('ResetTimerHandler', () => {
     it('should reject when service rejects', async () => {
       const command = new ResetTimerCommand();
       const error = new Error('Service failure');
-      mockTimerApplicationService.resetTimer.and.returnValue(Promise.reject(error));
+      mockTimerApplicationService.resetTimer.and.throwError(error);
       
       const result = handler.handle(command);
       

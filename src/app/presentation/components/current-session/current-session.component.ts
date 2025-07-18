@@ -3,7 +3,7 @@
  * @author Work Timer Application
  */
 
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CurrentSessionData } from '../../interfaces/component-data.interfaces';
 
@@ -17,7 +17,8 @@ import { CurrentSessionData } from '../../interfaces/component-data.interfaces';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './current-session.component.html',
-  styleUrl: './current-session.component.css'
+  styleUrl: './current-session.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CurrentSessionComponent {
   /** Current session data containing time, status, and count */

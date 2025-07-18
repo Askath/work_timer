@@ -74,7 +74,7 @@ describe('StopWorkHandler', () => {
     it('should propagate service errors', async () => {
       const command = new StopWorkCommand(TestTimes.FIVE_PM);
       const error = new Error('Timer service error');
-      mockTimerApplicationService.stopWork.and.rejectWith(error);
+      mockTimerApplicationService.stopWork.and.throwError(error);
       
       await expectAsync(handler.handle(command)).toBeRejectedWith(error);
     });
@@ -104,7 +104,7 @@ describe('StopWorkHandler', () => {
   describe('Async Behavior', () => {
     it('should complete when service completes', async () => {
       const command = new StopWorkCommand(TestTimes.FIVE_PM);
-      mockTimerApplicationService.stopWork.and.returnValue(Promise.resolve());
+      mockTimerApplicationService.stopWork.and.returnValue(undefined);
       
       const result = handler.handle(command);
       
@@ -115,7 +115,7 @@ describe('StopWorkHandler', () => {
     it('should reject when service rejects', async () => {
       const command = new StopWorkCommand(TestTimes.FIVE_PM);
       const error = new Error('Service failure');
-      mockTimerApplicationService.stopWork.and.returnValue(Promise.reject(error));
+      mockTimerApplicationService.stopWork.and.throwError(error);
       
       const result = handler.handle(command);
       

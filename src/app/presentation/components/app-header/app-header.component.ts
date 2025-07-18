@@ -3,7 +3,7 @@
  * @author Work Timer Application
  */
 
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { HeaderData } from '../../interfaces/component-data.interfaces';
 
 /**
@@ -15,7 +15,8 @@ import { HeaderData } from '../../interfaces/component-data.interfaces';
   selector: 'app-header',
   standalone: true,
   templateUrl: './app-header.component.html',
-  styleUrl: './app-header.component.css'
+  styleUrl: './app-header.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppHeaderComponent {
   /** Header data containing title and current date */

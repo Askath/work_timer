@@ -74,7 +74,7 @@ describe('StartWorkHandler', () => {
     it('should propagate service errors', async () => {
       const command = new StartWorkCommand(TestTimes.NINE_AM);
       const error = new Error('Timer service error');
-      mockTimerApplicationService.startWork.and.rejectWith(error);
+      mockTimerApplicationService.startWork.and.throwError(error);
       
       await expectAsync(handler.handle(command)).toBeRejectedWith(error);
     });
@@ -104,7 +104,7 @@ describe('StartWorkHandler', () => {
   describe('Async Behavior', () => {
     it('should complete when service completes', async () => {
       const command = new StartWorkCommand(TestTimes.NINE_AM);
-      mockTimerApplicationService.startWork.and.returnValue(Promise.resolve());
+      mockTimerApplicationService.startWork.and.returnValue(undefined);
       
       const result = handler.handle(command);
       
@@ -115,7 +115,7 @@ describe('StartWorkHandler', () => {
     it('should reject when service rejects', async () => {
       const command = new StartWorkCommand(TestTimes.NINE_AM);
       const error = new Error('Service failure');
-      mockTimerApplicationService.startWork.and.returnValue(Promise.reject(error));
+      mockTimerApplicationService.startWork.and.throwError(error);
       
       const result = handler.handle(command);
       

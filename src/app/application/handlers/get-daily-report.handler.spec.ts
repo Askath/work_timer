@@ -191,7 +191,7 @@ describe('GetDailyReportHandler', () => {
       const error = new Error('Report generation error');
       
       mockTimerApplicationService.getCurrentState.and.returnValue(mockState as any);
-      mockReportingService.generateDailyReport.and.rejectWith(error);
+      mockReportingService.generateDailyReport.and.throwError(error);
       
       const query = new GetDailyReportQuery();
       
@@ -213,7 +213,14 @@ describe('GetDailyReportHandler', () => {
         pauseDeduction: TestDurations.ZERO,
         isComplete: false,
         remainingTime: TestDurations.TEN_HOURS.subtract(TestDurations.ONE_HOUR.add(TestDurations.THIRTY_MINUTES)),
-        sessions: [session]
+        progressPercentage: 15,
+        formattedTimes: {
+          totalWorkTime: '01:30:00',
+          totalPauseTime: '00:00:00',
+          pauseDeduction: '00:00:00',
+          effectiveWorkTime: '01:30:00',
+          remainingTime: '08:30:00'
+        }
       };
       
       mockTimerApplicationService.getCurrentState.and.returnValue(mockState as any);
@@ -314,14 +321,14 @@ describe('GetDailyReportHandler', () => {
         totalPauseTime: TestDurations.THIRTY_MINUTES,
         effectiveWorkTime: TestDurations.ONE_HOUR.add(TestDurations.THIRTY_MINUTES), // 2 hours - 30 min deduction
         sessionCount: 2,
-        pauseDeductionApplied: true,
+        pauseDeduction: TestDurations.THIRTY_MINUTES,
         isComplete: false,
         remainingTime: TestDurations.TEN_HOURS.subtract(TestDurations.ONE_HOUR.add(TestDurations.THIRTY_MINUTES)),
         progressPercentage: 20,
         formattedTimes: {
           totalWorkTime: '02:00:00',
           totalPauseTime: '01:00:00',
-          pauseDeduction: '00:00:00',
+          pauseDeduction: '00:30:00',
           effectiveWorkTime: '02:00:00',
           remainingTime: '08:00:00'
         }

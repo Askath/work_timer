@@ -3,7 +3,7 @@
  * @author Work Timer Application
  */
 
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { DailySummaryData } from '../../interfaces/component-data.interfaces';
 
 /**
@@ -15,7 +15,8 @@ import { DailySummaryData } from '../../interfaces/component-data.interfaces';
   selector: 'app-daily-summary',
   standalone: true,
   templateUrl: './daily-summary.component.html',
-  styleUrl: './daily-summary.component.css'
+  styleUrl: './daily-summary.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DailySummaryComponent {
   /** Daily summary data containing work time metrics */

@@ -3,7 +3,7 @@
  * @author Work Timer Application
  */
 
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 /**
  * Dumb component for displaying work completion message.
@@ -14,7 +14,8 @@ import { Component } from '@angular/core';
   selector: 'app-work-complete',
   standalone: true,
   templateUrl: './work-complete.component.html',
-  styleUrl: './work-complete.component.css'
+  styleUrl: './work-complete.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkCompleteComponent {
   // No inputs or outputs needed - this is a static display component
