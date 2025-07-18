@@ -1,0 +1,97 @@
+<div class="dashboard">
+  <header class="dashboard-header">
+    <h1>Work Timer</h1>
+    <p class="date">{{ currentDate }}</p>
+  </header>
+
+  <div class="main-content">
+    <!-- Timer Controls -->
+    <div class="timer-controls">
+      <button 
+        class="btn btn-primary"
+        [class.btn-stop]="timerService.currentStatus() === TimerStatus.RUNNING"
+        [disabled]="timerService.isWorkComplete()"
+        (click)="toggleTimer()">
+        {{ getButtonText() }}
+      </button>
+      
+      <button 
+        class="btn btn-secondary"
+        (click)="resetTimer()">
+        Reset
+      </button>
+    </div>
+
+    <!-- Current Session Display -->
+    <div class="current-session">
+      <h2>Current Session</h2>
+      <div class="time-display current-time">
+        {{ timerService.formattedCurrentSession() }}
+      </div>
+      <div class="session-info">
+        <span class="status" [class]="'status-' + timerService.currentStatus()">
+          {{ getStatusText() }}
+        </span>
+        <span class="sessions-count">
+          Session {{ timerService.sessionsCount() }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Daily Summary -->
+    <div class="daily-summary">
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h3>Total Work Time</h3>
+          <div class="time-display">{{ timerService.formattedCurrentTime() }}</div>
+        </div>
+        
+        <div class="summary-item">
+          <h3>Effective Work Time</h3>
+          <div class="time-display">{{ timerService.formattedEffectiveTime() }}</div>
+        </div>
+        
+        <div class="summary-item">
+          <h3>Pause Time</h3>
+          <div class="time-display">{{ timerService.formattedPauseTime() }}</div>
+        </div>
+        
+        <div class="summary-item">
+          <h3>Pause Deduction</h3>
+          <div class="time-display">{{ formatTime(timerService.pauseDeduction()) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Limit Display -->
+    <div class="daily-limit">
+      <h2>Daily Limit (10 Hours)</h2>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div 
+            class="progress-fill"
+            [style.width.%]="getProgressPercentage()">
+          </div>
+        </div>
+        <div class="progress-text">
+          {{ getProgressText() }}
+        </div>
+      </div>
+      
+      <div class="limit-info">
+        <div class="remaining-time">
+          <h3>Remaining Time</h3>
+          <div class="time-display" [class.complete]="timerService.isWorkComplete()">
+            {{ timerService.formattedRemainingTime() }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Work Complete Message -->
+    <div class="work-complete" *ngIf="timerService.isWorkComplete()">
+      <h2>🎉 Work Complete!</h2>
+      <p>You've reached your daily 10-hour limit.</p>
+    </div>
+  </div>
+</div>
