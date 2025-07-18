@@ -61,10 +61,40 @@ export class TimerFacade {
   readonly formattedRemainingTime = computed(() => this.remainingTime().format());
 
   // UI helpers
-  readonly buttonText = computed(() => this.timerApplicationService.getButtonText());
-  readonly statusText = computed(() => this.timerApplicationService.getStatusText());
-  readonly canStartWork = computed(() => this.timerApplicationService.canStartWork());
-  readonly canStopWork = computed(() => this.timerApplicationService.canStopWork());
+  readonly buttonText = computed(() => {
+    const state = this._state();
+    if (!state) return 'Start Work';
+    
+    if (state.calculations.isComplete) {
+      return 'Work Complete';
+    }
+    
+    switch (state.workDay.status.value) {
+      case 'STOPPED':
+        return 'Start Work';
+      case 'RUNNING':
+        return 'Stop Work';
+      case 'PAUSED':
+        return 'Resume Work';
+      default:
+        return 'Start Work';
+    }
+  });
+  
+  readonly statusText = computed(() => {
+    const state = this._state();
+    return state?.workDay.status.getDisplayText() || 'Stopped';
+  });
+  
+  readonly canStartWork = computed(() => {
+    const state = this._state();
+    return state ? !state.workDay.status.isRunning() : true;
+  });
+  
+  readonly canStopWork = computed(() => {
+    const state = this._state();
+    return state ? state.workDay.status.isRunning() : false;
+  });
 
   // Current date for display
   readonly currentDate = new Date().toLocaleDateString('en-US', { 
