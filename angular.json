@@ -18,10 +18,20 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
+            "externalDependencies": [
+              "fs",
+              "path", 
+              "crypto"
+            ],
             "assets": [
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "*.wasm",
+                "input": "node_modules/sql.js/dist/",
+                "output": "/assets/"
               }
             ],
             "styles": [
@@ -79,10 +89,20 @@
               "zone.js/testing"
             ],
             "tsConfig": "tsconfig.spec.json",
+            "externalDependencies": [
+              "fs",
+              "path", 
+              "crypto"
+            ],
             "assets": [
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "*.wasm",
+                "input": "node_modules/sql.js/dist/",
+                "output": "/assets/"
               }
             ],
             "styles": [

@@ -20,7 +20,7 @@ export class SqliteDatabaseService {
 
     try {
       const SQL = await initSqlJs({
-        locateFile: file => `https://sql.js.org/dist/${file}`
+        locateFile: (file: string) => `/assets/${file}`
       });
 
       const existingData = localStorage.getItem('work-timer-sqlite-db');
@@ -127,7 +127,7 @@ export class SqliteDatabaseService {
         SELECT COUNT(*) as count FROM work_days
       `);
       
-      if (migrationCheck.length > 0 && migrationCheck[0].values[0][0] > 0) {
+      if (migrationCheck.length > 0 && (migrationCheck[0].values[0][0] as number) > 0) {
         return; // Already migrated
       }
 

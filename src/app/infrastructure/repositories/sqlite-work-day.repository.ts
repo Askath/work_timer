@@ -7,6 +7,15 @@ import { Injectable } from '@angular/core';
 import { WorkDay, WorkDayDate } from '../../domain/index';
 import { WorkDayRepository } from '../../domain/repositories/work-day.repository';
 import { SqliteDatabaseService } from '../services/sqlite-database.service';
+import { SqlValue } from 'sql.js';
+
+interface SessionData {
+  id: string;
+  date: string;
+  startTime: string;
+  endTime: string | null;
+  duration: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -103,7 +112,7 @@ export class SqliteWorkDayRepository implements WorkDayRepository {
       `, [dateString]);
 
       const sessions = sessionsResult.length > 0 ? 
-        sessionsResult[0].values.map(row => ({
+        sessionsResult[0].values.map((row: SqlValue[]) => ({
           id: row[0] as string,
           date: row[1] as string,
           startTime: row[2] as string,
@@ -112,8 +121,8 @@ export class SqliteWorkDayRepository implements WorkDayRepository {
         })) : [];
 
       // Separate completed sessions from current session (if any)
-      const completedSessions = sessions.filter(s => s.endTime !== null);
-      const currentSession = sessions.find(s => s.endTime === null) || null;
+      const completedSessions = sessions.filter((s: SessionData) => s.endTime !== null);
+      const currentSession = sessions.find((s: SessionData) => s.endTime === null) || null;
 
       const workDayData = {
         date: workDayRow[0] as string,
@@ -160,7 +169,7 @@ export class SqliteWorkDayRepository implements WorkDayRepository {
         `, [dateString]);
 
         const sessions = sessionsResult.length > 0 ? 
-          sessionsResult[0].values.map(sessionRow => ({
+          sessionsResult[0].values.map((sessionRow: SqlValue[]) => ({
             id: sessionRow[0] as string,
             date: sessionRow[1] as string,
             startTime: sessionRow[2] as string,
@@ -169,8 +178,8 @@ export class SqliteWorkDayRepository implements WorkDayRepository {
           })) : [];
 
         // Separate completed sessions from current session
-        const completedSessions = sessions.filter(s => s.endTime !== null);
-        const currentSession = sessions.find(s => s.endTime === null) || null;
+        const completedSessions = sessions.filter((s: SessionData) => s.endTime !== null);
+        const currentSession = sessions.find((s: SessionData) => s.endTime === null) || null;
 
         const workDayData = {
           date: row[0] as string,
@@ -221,7 +230,7 @@ export class SqliteWorkDayRepository implements WorkDayRepository {
         WHERE date = ?
       `, [date.toISOString()]);
 
-      return result.length > 0 && result[0].values.length > 0 && result[0].values[0][0] > 0;
+      return result.length > 0 && result[0].values.length > 0 && (result[0].values[0][0] as number) > 0;
     } catch (error) {
       console.error('Error checking if work day exists in SQLite:', error);
       return false;

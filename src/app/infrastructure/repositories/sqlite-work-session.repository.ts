@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 import { WorkSession, WorkDayDate } from '../../domain/index';
 import { WorkSessionRepository } from '../../domain/repositories/work-session.repository';
 import { SqliteDatabaseService } from '../services/sqlite-database.service';
+import { SqlValue } from 'sql.js';
 
 @Injectable({
   providedIn: 'root'
@@ -90,7 +91,7 @@ export class SqliteWorkSessionRepository implements WorkSessionRepository {
         return [];
       }
 
-      return result[0].values.map(row => {
+      return result[0].values.map((row: SqlValue[]) => {
         const sessionData = {
           id: row[0] as string,
           date: row[1] as string,
@@ -122,7 +123,7 @@ export class SqliteWorkSessionRepository implements WorkSessionRepository {
         return [];
       }
 
-      return result[0].values.map(row => {
+      return result[0].values.map((row: SqlValue[]) => {
         const sessionData = {
           id: row[0] as string,
           date: row[1] as string,
