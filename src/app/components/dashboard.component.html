@@ -9,8 +9,8 @@
     <div class="timer-controls">
       <button 
         class="btn btn-primary"
-        [class.btn-stop]="timerService.currentStatus() === TimerStatus.RUNNING"
-        [disabled]="timerService.isWorkComplete()"
+        [class.btn-stop]="timerFacade.currentStatus().isRunning()"
+        [disabled]="timerFacade.isWorkComplete()"
         (click)="toggleTimer()">
         {{ getButtonText() }}
       </button>
@@ -26,14 +26,14 @@
     <div class="current-session">
       <h2>Current Session</h2>
       <div class="time-display current-time">
-        {{ timerService.formattedCurrentSession() }}
+        {{ timerFacade.formattedCurrentSession() }}
       </div>
       <div class="session-info">
-        <span class="status" [class]="'status-' + timerService.currentStatus()">
+        <span class="status" [class]="'status-' + timerFacade.statusText().toLowerCase()">
           {{ getStatusText() }}
         </span>
         <span class="sessions-count">
-          Session {{ timerService.sessionsCount() }}
+          Session {{ timerFacade.sessionsCount() }}
         </span>
       </div>
     </div>
@@ -43,22 +43,22 @@
       <div class="summary-grid">
         <div class="summary-item">
           <h3>Total Work Time</h3>
-          <div class="time-display">{{ timerService.formattedCurrentTime() }}</div>
+          <div class="time-display">{{ timerFacade.formattedCurrentTime() }}</div>
         </div>
         
         <div class="summary-item">
           <h3>Effective Work Time</h3>
-          <div class="time-display">{{ timerService.formattedEffectiveTime() }}</div>
+          <div class="time-display">{{ timerFacade.formattedEffectiveTime() }}</div>
         </div>
         
         <div class="summary-item">
           <h3>Pause Time</h3>
-          <div class="time-display">{{ timerService.formattedPauseTime() }}</div>
+          <div class="time-display">{{ timerFacade.formattedPauseTime() }}</div>
         </div>
         
         <div class="summary-item">
           <h3>Pause Deduction</h3>
-          <div class="time-display">{{ formatTime(timerService.pauseDeduction()) }}</div>
+          <div class="time-display">{{ timerFacade.pauseDeduction().format() }}</div>
         </div>
       </div>
     </div>
@@ -81,15 +81,15 @@
       <div class="limit-info">
         <div class="remaining-time">
           <h3>Remaining Time</h3>
-          <div class="time-display" [class.complete]="timerService.isWorkComplete()">
-            {{ timerService.formattedRemainingTime() }}
+          <div class="time-display" [class.complete]="timerFacade.isWorkComplete()">
+            {{ timerFacade.formattedRemainingTime() }}
           </div>
         </div>
       </div>
     </div>
 
     <!-- Work Complete Message -->
-    <div class="work-complete" *ngIf="timerService.isWorkComplete()">
+    <div class="work-complete" *ngIf="timerFacade.isWorkComplete()">
       <h2>🎉 Work Complete!</h2>
       <p>You've reached your daily 10-hour limit.</p>
     </div>

@@ -1,0 +1,13 @@
+<!--
+  @fileoverview Current session template for displaying session info.
+  @author Work Timer Application
+-->
+
+<div class="card-light text-center">
+  <h2 class="text-secondary font-weight-medium mb-lg">Current Session</h2>
+  <div class="time-display time-display-large font-mono mb-sm">{{ data().sessionTime }}</div>
+  <div class="session-info">
+    <span class="status" [ngClass]="data().statusClass">{{ data().status }}</span>
+    <span class="sessions-count">Session {{ data().sessionCount }}</span>
+  </div>
+</div>

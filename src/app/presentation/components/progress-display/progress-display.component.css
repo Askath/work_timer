@@ -1,0 +1,9 @@
+/**
+ * @fileoverview Styles for progress display component.
+ * @author Work Timer Application
+ */
+
+/* Import shared styles */
+@import '../../shared/styles/index.css';
+
+/* Component-specific styles (if any) can be added here */

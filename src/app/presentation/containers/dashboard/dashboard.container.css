@@ -1,0 +1,14 @@
+/**
+ * @fileoverview Styles for dashboard container component.
+ * @author Work Timer Application
+ */
+
+/* Import shared styles */
+@import '../../shared/styles/index.css';
+
+/* Container-specific styles */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+}

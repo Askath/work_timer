@@ -1,0 +1,26 @@
+<!--
+  @fileoverview Daily summary template for displaying work metrics.
+  @author Work Timer Application
+-->
+
+<div class="card">
+  <h2 class="text-center text-secondary font-weight-medium mb-lg">Daily Summary</h2>
+  <div class="summary-grid mobile-grid-single">
+    <div class="summary-item">
+      <h3>Total Work Time</h3>
+      <div class="time-display-small">{{ data().totalWorkTime }}</div>
+    </div>
+    <div class="summary-item">
+      <h3>Effective Work Time</h3>
+      <div class="time-display-small">{{ data().effectiveWorkTime }}</div>
+    </div>
+    <div class="summary-item">
+      <h3>Pause Time</h3>
+      <div class="time-display-small">{{ data().pauseTime }}</div>
+    </div>
+    <div class="summary-item">
+      <h3>Pause Deduction</h3>
+      <div class="time-display-small">{{ data().pauseDeduction }}</div>
+    </div>
+  </div>
+</div>
