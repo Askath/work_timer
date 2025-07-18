@@ -4,12 +4,11 @@
  */
 
 // Repository implementations
-export * from './repositories/sqlite-work-session.repository';
-export * from './repositories/sqlite-work-day.repository';
-export * from './repositories/sqlite-timer-state.repository';
+export * from './repositories/http-work-session.repository';
+export * from './repositories/http-work-day.repository';
+export * from './repositories/local-storage-timer-state.repository';
 
 // Services
-export * from './services/sqlite-database.service';
 export * from './services/app-initialization.service';
 
 // Adapters

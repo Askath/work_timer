@@ -1,0 +1,24 @@
+{
+  "name": "work-timer-server",
+  "version": "1.0.0",
+  "description": "Node.js backend for work timer with file-based storage",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "fs-extra": "^11.1.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "jest": "^29.5.0"
+  },
+  "keywords": ["work-timer", "express", "file-storage"],
+  "author": "Work Timer Application",
+  "license": "MIT"
+}

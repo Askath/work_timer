@@ -18,20 +18,10 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
-            "externalDependencies": [
-              "fs",
-              "path", 
-              "crypto"
-            ],
             "assets": [
               {
                 "glob": "**/*",
                 "input": "public"
-              },
-              {
-                "glob": "*.wasm",
-                "input": "node_modules/sql.js/dist/",
-                "output": "/assets/"
               }
             ],
             "styles": [
@@ -61,7 +51,11 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "define": {
+                "global": "globalThis",
+                "process.env.NODE_ENV": "\"development\""
+              }
             }
           },
           "defaultConfiguration": "production"
@@ -73,7 +67,8 @@
               "buildTarget": "work_timer:build:production"
             },
             "development": {
-              "buildTarget": "work_timer:build:development"
+              "buildTarget": "work_timer:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
@@ -86,23 +81,14 @@
           "options": {
             "polyfills": [
               "zone.js",
-              "zone.js/testing"
+              "zone.js/testing",
+              "src/polyfills.ts"
             ],
             "tsConfig": "tsconfig.spec.json",
-            "externalDependencies": [
-              "fs",
-              "path", 
-              "crypto"
-            ],
             "assets": [
               {
                 "glob": "**/*",
                 "input": "public"
-              },
-              {
-                "glob": "*.wasm",
-                "input": "node_modules/sql.js/dist/",
-                "output": "/assets/"
               }
             ],
             "styles": [
