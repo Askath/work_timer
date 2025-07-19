@@ -17,6 +17,22 @@ export interface WorkDayCalculations {
   isComplete: boolean;
 }
 
+export interface WorkSessionData {
+  id: string;
+  startTime: Date;
+  endTime: Date | null;
+  duration: number;
+  date: string;
+}
+
+export interface WorkDaySerializationData {
+  date: string;
+  sessions: WorkSessionData[];
+  currentSession: WorkSessionData | null;
+  status: string;
+  pauseDeductionApplied: boolean;
+}
+
 export class WorkDay {
   private readonly _sessions: WorkSession[] = [];
   private _currentSession: WorkSession | null = null;
@@ -220,13 +236,7 @@ export class WorkDay {
     return this._status.isRunning();
   }
 
-  toData(): {
-    date: string;
-    sessions: any[];
-    currentSession: any | null;
-    status: string;
-    pauseDeductionApplied: boolean;
-  } {
+  toData(): WorkDaySerializationData {
     return {
       date: this.date.toISOString(),
       sessions: this._sessions.map(session => session.toData()),
@@ -236,13 +246,7 @@ export class WorkDay {
     };
   }
 
-  static fromData(data: {
-    date: string;
-    sessions: any[];
-    currentSession: any | null;
-    status: string;
-    pauseDeductionApplied: boolean;
-  }): WorkDay {
+  static fromData(data: WorkDaySerializationData): WorkDay {
     const date = WorkDayDate.fromString(data.date);
     const sessions = data.sessions.map(sessionData => WorkSession.fromData(sessionData));
     const currentSession = data.currentSession ? WorkSession.fromData(data.currentSession) : null;
