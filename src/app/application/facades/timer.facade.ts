@@ -17,7 +17,7 @@ import { StopWorkCommand } from '../commands/stop-work.command';
 import { ResetTimerCommand } from '../commands/reset-timer.command';
 import { GetCurrentSessionQuery } from '../queries/get-current-session.query';
 import { GetDailyReportQuery } from '../queries/get-daily-report.query';
-import { Duration, TimerStatus, WorkDayDate } from '../../domain';
+import { Duration, TimerStatus, WorkDayDate, DomainEvent, WorkDaySerializationData } from '../../domain';
 
 @Injectable({
   providedIn: 'root'
@@ -135,7 +135,7 @@ export class TimerFacade implements OnDestroy {
   }
 
   private setupEventHandlers(): void {
-    this.timerApplicationService.onEvent((event: any) => {
+    this.timerApplicationService.onEvent((event: DomainEvent) => {
       console.log('Domain event:', event.eventType, event);
       this.updateState();
     });
@@ -192,7 +192,7 @@ export class TimerFacade implements OnDestroy {
     console.log('Saving work day data:', data);
   }
 
-  loadFromStorage(data: any): void {
+  loadFromStorage(data: WorkDaySerializationData): void {
     // This will be implemented when we create the infrastructure layer
     this.timerApplicationService.loadWorkDay(data);
     this.updateState();

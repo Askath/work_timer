@@ -6,7 +6,7 @@
 import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { WorkSession, WorkDay, WorkDayDate } from '../../../domain/index';
+import { WorkSession, WorkDay, WorkDayDate, Duration } from '../../../domain/index';
 import { WorkDayRepository } from '../../../domain/repositories/work-day.repository';
 import { WorkSessionRepository } from '../../../domain/repositories/work-session.repository';
 import { WORK_DAY_REPOSITORY, WORK_SESSION_REPOSITORY } from '../../../domain/repositories/injection-tokens';
@@ -224,7 +224,7 @@ export class WorkHistoryComponent implements OnInit {
     }
   }
 
-  private calculateEffectiveWorkTime(workDay: WorkDay): any {
+  private calculateEffectiveWorkTime(workDay: WorkDay): Duration {
     const totalWorkTime = workDay.calculateTotalWorkTime();
     // Simplified calculation - in real implementation, apply pause deduction logic
     return totalWorkTime;

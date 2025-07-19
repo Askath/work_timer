@@ -14,7 +14,9 @@ import {
   WorkSessionStartedEvent,
   WorkSessionStoppedEvent,
   PauseDeductionAppliedEvent,
-  DailyLimitReachedEvent 
+  DailyLimitReachedEvent,
+  DomainEvent,
+  WorkDaySerializationData
 } from '../../domain';
 
 export interface TimerApplicationState {
@@ -35,7 +37,7 @@ export interface TimerApplicationState {
 })
 export class TimerApplicationService {
   private _currentWorkDay: WorkDay;
-  private _eventHandlers: Array<(event: any) => void> = [];
+  private _eventHandlers: Array<(event: DomainEvent) => void> = [];
 
   constructor(
     private timeCalculationService: TimeCalculationService,
@@ -128,7 +130,7 @@ export class TimerApplicationService {
     }
   }
 
-  loadWorkDay(workDayData: any): void {
+  loadWorkDay(workDayData: WorkDaySerializationData): void {
     try {
       this._currentWorkDay = WorkDay.fromData(workDayData);
     } catch (error) {
@@ -137,7 +139,7 @@ export class TimerApplicationService {
     }
   }
 
-  getWorkDayData(): any {
+  getWorkDayData(): WorkDaySerializationData {
     return this._currentWorkDay.toData();
   }
 
@@ -179,11 +181,11 @@ export class TimerApplicationService {
     return this._currentWorkDay.status.getDisplayText();
   }
 
-  onEvent(handler: (event: any) => void): void {
+  onEvent(handler: (event: DomainEvent) => void): void {
     this._eventHandlers.push(handler);
   }
 
-  private emitEvent(event: any): void {
+  private emitEvent(event: DomainEvent): void {
     this._eventHandlers.forEach(handler => {
       try {
         handler(event);

@@ -5,6 +5,7 @@
 
 import { Duration } from '../value-objects/duration';
 import { WorkDayDate } from '../value-objects/work-day-date';
+import { WorkSessionData } from './work-day';
 
 export class WorkSession {
   private constructor(
@@ -21,13 +22,7 @@ export class WorkSession {
     return new WorkSession(id, startTime, null, workDate, Duration.zero());
   }
 
-  static fromData(data: { 
-    id: string; 
-    startTime: Date; 
-    endTime: Date | null; 
-    duration: number;
-    date: string;
-  }): WorkSession {
+  static fromData(data: WorkSessionData): WorkSession {
     const workDate = WorkDayDate.fromString(data.date);
     return new WorkSession(
       data.id, 
@@ -70,13 +65,7 @@ export class WorkSession {
     return Duration.fromMilliseconds(currentTime.getTime() - this.startTime.getTime());
   }
 
-  toData(): { 
-    id: string; 
-    startTime: Date; 
-    endTime: Date | null; 
-    duration: number;
-    date: string;
-  } {
+  toData(): WorkSessionData {
     return {
       id: this.id,
       startTime: this.startTime,

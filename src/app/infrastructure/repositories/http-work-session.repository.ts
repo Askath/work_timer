@@ -109,7 +109,7 @@ export class HttpWorkSessionRepository implements WorkSessionRepository {
   /**
    * Handle HTTP errors and convert to user-friendly messages
    */
-  private handleError(error: any, defaultMessage: string): Error {
+  private handleError(error: unknown, defaultMessage: string): Error {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 0) {
         return new Error('Unable to connect to server. Please ensure the Node.js backend is running.');
