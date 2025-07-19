@@ -50,8 +50,9 @@ jobs:
             - Test coverage
             - Add comments to problematic code in the pr
             - For TypeScript files: Type safety and proper interface usage
+            - Run ng build to make sure the PR runs
             
-            Be constructive and helpful in your feedback.
+            Be as critical as possible and categorize issues in minor, mid, or must fix. 
 
           # Optional: Use sticky comments to make Claude reuse the same comment on subsequent pushes to the same PR
           use_sticky_comment: true
@@ -71,7 +72,7 @@ jobs:
           #   'Please provide a thorough code review focusing on our coding standards and best practices.' }}
           
           # Optional: Add specific tools for running tests or linting
-          allowed_tools: "Bash(npm run test),Bash(npm run lint),Bash(npm run typecheck)"
+          allowed_tools: "Bash"
           
           # Optional: Skip review for certain conditions
           # if: |
